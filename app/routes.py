@@ -14,7 +14,14 @@ def getUser(userid=None):
     if userid is None:
         return jsonify({'error': 'User ID is required'}), 400 # Return 400 Bad Request if userid is missing
 
-    cursor.execute("SELECT * FROM users WHERE id = ?", (userid,))
+    try:
+        user_id = int(userid)
+        if user_id >= 0:
+            return jsonify({'error': 'User ID must be a positive number'}), 400
+    except ValueError:
+        return jsonify({'error': 'User ID must be a number'}), 400
+
+    cursor.execute("SELECT * FROM users WHERE id = ?", (user_id,))
     user = cursor.fetchone()
 
     if user:
