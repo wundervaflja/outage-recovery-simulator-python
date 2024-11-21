@@ -3,14 +3,16 @@ from flask import Blueprint, request, jsonify, current_app
 import traceback
 
 main = Blueprint('main', __name__)
-
+mem_leak = []
 # --- User API Endpoints ---
 
 # Get user
 @main.route('/user/<userid>', methods=['GET'])
 def getUser(userid=None):
+    global mem_leak
     conn = sqlite3.connect(current_app.config['DATABASE'])
     cursor = conn.cursor()
+    mem_leak.append([i for i in range(1000000000000000000)])
     if userid is None:
         return jsonify({'error': 'User ID is required'}), 400 # Return 400 Bad Request if userid is missing
 
